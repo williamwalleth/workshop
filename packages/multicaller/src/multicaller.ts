@@ -3,7 +3,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
 import { set } from 'lodash'
 
-type Call = {
+export type Call = {
   key: string;
   address: string;
   function: string | FunctionFragment;
@@ -11,17 +11,33 @@ type Call = {
   params?: any[];
 };
 
+enum Network {
+  MAINNET = '1',
+  KOVAN = '42',
+  POLYGON = '137',
+  ARBITRUM = '42161'
+}
+
+const ContractAddressMap = {
+  [Network.MAINNET]: '0x5ba1e12693dc8f9c48aad8770482f4739beed696',
+  [Network.POLYGON]: '0x275617327c958bD06b5D6b871E7f491D76113dd8',
+  [Network.ARBITRUM]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+  [Network.KOVAN]: '0x5ba1e12693dc8f9c48aad8770482f4739beed696'
+}
+
 export class Multicaller {
+  public address: string
   public calls: Call[] = []
   public paths: string[] = []
 
   constructor(
-    public readonly address: string,
-    public readonly network: string,
+    public readonly network: Network,
     public readonly provider: JsonRpcProvider,
     public readonly options: Record<string, any> = {},
     public readonly requireAll = false
-  ) {}
+  ) {
+    this.address = ContractAddressMap[network]
+  }
 
   public call(callParams: Call): Multicaller {
     this.calls.push(callParams)
