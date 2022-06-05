@@ -12,8 +12,8 @@ type Call = {
 };
 
 export class Multicaller {
-  public calls: Call[] = [];
-  public paths: string[] = [];
+  public calls: Call[] = []
+  public paths: string[] = []
 
   constructor(
     public readonly address: string,
@@ -24,18 +24,18 @@ export class Multicaller {
   ) {}
 
   public call(callParams: Call): Multicaller {
-    this.calls.push(callParams);
-    this.paths.push(callParams.key);
-    return this;
+    this.calls.push(callParams)
+    this.paths.push(callParams.key)
+    return this
   }
 
-  public async execute<T = any>(from?: any): Promise<T> {
-    const obj = from || {};
-    const result = await this._execute();
-    result.forEach((r, i) => set(obj, this.paths[i], r));
-    this.calls = [];
-    this.paths = [];
-    return obj;
+  public async execute<T>(from?: any): Promise<T> {
+    const obj = from || {}
+    const result = await this._execute()
+    result.forEach((r, i) => set(obj, this.paths[i], r))
+    this.calls = []
+    this.paths = []
+    return obj
   }
 
   private getMulticallerInstance(): Contract {
@@ -45,25 +45,25 @@ export class Multicaller {
         'function tryAggregate(bool requireSuccess, tuple(address, bytes)[] memory calls) public view returns (tuple(bool, bytes)[] memory returnData)'
       ],
       this.provider
-    );
+    )
   }
 
   private callInterfaces(): Interface[] {
-    return this.calls.map(call => new Interface(call.abi));
+    return this.calls.map(call => new Interface(call.abi))
   }
 
   private encodedCalls(): Array<string[]> {
-    const interfaces = this.callInterfaces();
+    const interfaces = this.callInterfaces()
 
     return this.calls.map((call, i) => [
       call.address.toLowerCase(),
       interfaces[i].encodeFunctionData(call.function, call.params)
-    ]);
+    ])
   }
 
   private async _execute<T>(): Promise<(T | null)[]> {
-    const multicaller = this.getMulticallerInstance();
-    const interfaces = this.callInterfaces();
+    const multicaller = this.getMulticallerInstance()
+    const interfaces = this.callInterfaces()
 
     try {
       const res: [boolean, string][] = await multicaller.tryAggregate(
@@ -71,19 +71,19 @@ export class Multicaller {
         this.requireAll,
         this.encodedCalls(),
         this.options
-      );
+      )
 
       return res.map(([success, returnData], i) => {
-        if (!success) return null;
+        if (!success) return null
         const decodedResult = interfaces[i].decodeFunctionResult(
           this.calls[i].function,
           returnData
-        );
+        )
         // Automatically unwrap any simple return values
-        return decodedResult.length > 1 ? decodedResult : decodedResult[0];
-      });
+        return decodedResult.length > 1 ? decodedResult : decodedResult[0]
+      })
     } catch (e) {
-      return Promise.reject(e);
+      return Promise.reject(e)
     }
   }
 }
