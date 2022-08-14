@@ -1,0 +1,17 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "strictNullChecks": true,
+    "target": "es5", 
+    "outDir": "../evm-fetch/dist",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "lib": ["es2015", "dom"],
+    "rootDir": "../evm-fetch/src"
+  },
+  "include": [
+    "../evm-fetch/src"
+  ]
+}

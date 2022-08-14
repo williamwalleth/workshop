@@ -1,9 +1,10 @@
 {
-  "name": "@williamwalleth/eth-utils",
+  "name": "@williamwalleth/abi",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
+    "script": "ts-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -12,8 +13,10 @@
     "@types/lodash": "^4.14.182",
     "eslint": "^8.17.0",
     "eslint-config-custom": "*",
+    "evm-fetch": "*",
     "ethers": "^5.6.8",
     "lodash": "^4.17.21",
+    "ts-node": "^10.8.1",
     "tsconfig": "*",
     "typescript": "^4.7.3"
   }
